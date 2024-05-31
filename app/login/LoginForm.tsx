@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Heading from "../components/Heading";
 import Input from "../components/inputs/Input";
 import { FieldValues, useForm, SubmitHandler } from "react-hook-form";
@@ -9,8 +9,13 @@ import { AiOutlineGoogle } from "react-icons/ai";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+import { safeUser } from "@/Types";
 
-const LoginForm = () => {
+interface LoginFormProps{
+    currentUser: safeUser | null;
+}
+
+const LoginForm:React.FC<LoginFormProps> = ({currentUser}) => {
     const [isLoading, setIsLoading] = useState(false); 
 
     const { register, handleSubmit, formState: { errors } } = useForm<FieldValues>({
@@ -22,6 +27,14 @@ const LoginForm = () => {
 
     const router = useRouter()
 
+    useEffect(() => {
+        if(currentUser){
+            router.push('/')
+            router.refresh()
+        }
+
+    },[])
+
     const onSubmit: SubmitHandler<FieldValues> = (data) => {
         setIsLoading(true); 
         signIn('credentials', {
@@ -32,7 +45,7 @@ const LoginForm = () => {
             if(callback?.ok){
                 router.push('/')
                 router.refresh()
-                    toast.success('Logged In')
+                    toast.success('Logged In Successfully')
                 
             }
             if(callback?.error){
@@ -41,6 +54,10 @@ const LoginForm = () => {
 
         })
     };
+
+    if(currentUser){
+        return <p className="text-center">Logged in Redirecting...</p>
+    }
 
     return (
         <>
@@ -65,7 +82,7 @@ const LoginForm = () => {
                 required
                 type="password"
             />
-            <Button label={isLoading ? "Loading" : "Log in"} onClick={handleSubmit(onSubmit)}/>
+            <Button label="Log in" onClick={handleSubmit(onSubmit)}/>
             <p className="text-sm">
                 Create an account ?
                 <Link className="underline" href="/register"> Sign Up</Link>

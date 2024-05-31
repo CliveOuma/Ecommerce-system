@@ -2,12 +2,18 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import prisma from '@/libs/prismadb';
 import bcrypt from 'bcryptjs';
-
+import GoogleProvider from "next-auth/providers/google";
+import NextAuth, { AuthOptions } from "next-auth";
 
 const nextAuthSecret = process.env.NEXTAUTH_SECRET;
 
-export const authOptions = {
+export const authOptions: AuthOptions = {
+  adapter: PrismaAdapter(prisma),
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    }),
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
@@ -40,7 +46,6 @@ export const authOptions = {
       },
     }),
   ],
-  adapter: PrismaAdapter(prisma),
   secret: nextAuthSecret,
   pages: {
     signIn: '/login',
@@ -50,3 +55,5 @@ export const authOptions = {
   },
   debug: process.env.NODE_ENV === 'development',
 };
+
+export default NextAuth(authOptions);

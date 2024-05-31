@@ -1,22 +1,15 @@
-"use client"
+
+import React from "react";
 import Link from "next/link";
 import Container from "../Container";
 import CartCount from "./CartCount";
 import UserMenu from "./UserMenu";
 import { getCurrentUser } from "@/actions/getCurrentUser";
-import { useEffect, useState } from "react";
-import { safeUser } from "@/Types"; 
+import Categories from "./Categories";
+import SearchBar from "../SearchBar";
 
-const Navbar = () => {
-  const [currentUser, setCurrentUser] = useState<safeUser | null>(null);
-
-  useEffect(() => {
-    async function fetchUser() {
-      const user = await getCurrentUser();
-      setCurrentUser(user);
-    }
-    fetchUser();
-  }, []);
+const Navbar = async () => {
+  const currentUser = await getCurrentUser();
 
   return (
     <div className="sticky top-0 w-full bg-slate-200 z-30 shadow-sm">
@@ -24,7 +17,7 @@ const Navbar = () => {
         <Container>
           <div className="flex items-center justify-between gap-3 md-gap-0">
             <Link href="/">e-buy</Link>
-            <div className="hidden md:block">Search</div>
+            <SearchBar/>
             <div className="flex items-center gap-8 md-gap-12">
               <CartCount />
               <UserMenu currentUser={currentUser} />
@@ -32,6 +25,7 @@ const Navbar = () => {
           </div>
         </Container>
       </div>
+      <Categories/>
     </div>
   );
 };

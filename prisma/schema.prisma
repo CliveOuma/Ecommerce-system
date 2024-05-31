@@ -2,30 +2,53 @@ datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
- 
+
 generator client {
   provider = "prisma-client-js"
 }
- 
+
 model User {
-  id            String          @id @default(auto()) @map("_id") @db.ObjectId
-  name          String?
-  email         String?         @unique
-  hashedPassword String  
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  // Optional for WebAuthn support
-  Authenticator Authenticator[]
- 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  role Role @default(USER)
+  id              String          @id @default(auto()) @map("_id") @db.ObjectId
+  name            String?
+  email           String?         @unique
+  hashedPassword  String  
+  emailVerified   DateTime?
+  image           String?
+  accounts        Account[]
+  sessions        Session[]
+  authenticator   Authenticator[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  role            Role            @default(USER)
+  reviews         Review[]
 }
-enum Role{
-    USER
-    ADMIN
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Product {
+  id              String          @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  description     String
+  price           Float
+  brand           String
+  category        String
+  inStock         Boolean
+  images          Image[]
+  reviews         Review[]
+}
+
+model Review {
+  id              String          @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String          @db.ObjectId
+  productId       String          @db.ObjectId
+  rating          Int
+  comment         String
+  createdAt       DateTime        @default(now())
+  product         Product         @relation(fields: [productId], references: [id])
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
  
 model Account {
@@ -34,45 +57,42 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.String
-  access_token      String? @db.String
-  expires_at        Int?
-  token_type        String?
+  refreshToken      String? @db.String
+  accessToken       String? @db.String
+  expiresAt         Int?
+  tokenType         String?
   scope             String?
-  id_token          String? @db.String
-  session_state     String?
- 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
- 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+  idToken           String? @db.String
+  sessionState      String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User @relation(fields: [userId], references: [id], onDelete: Cascade)
   @@unique([provider, providerAccountId])
 }
+
 model Authenticator {
-  id          String  @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String  @db.ObjectId
-  credential  String
-  publicKey   String
-  counter     Int
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  credential        String
+  publicKey         String
+  counter           Int
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   @@unique([userId, credential])
 }
 
 model Session {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  sessionId   String    @unique
-  userId      String    @db.ObjectId
-  userAgent   String?
-  ip          String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                String    @id @default(auto()) @map("_id") @db.ObjectId
+  sessionId         String    @unique
+  userId            String    @db.ObjectId
+  userAgent         String?
+  ip                String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
-  
- 
+
+type Image {
+  image String
+}

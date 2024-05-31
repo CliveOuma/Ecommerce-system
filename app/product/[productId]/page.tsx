@@ -1,16 +1,22 @@
 import Container from "@/app/components/Container";
 import ProductDetails from "./ProductDetails";
 import ListRating from "./ListRating";
-import { products } from "@/utils/products";
+import NullData from "@/app/components/NullData";
+import getProductById from "@/actions/getProductById";
+import AddRating from "../AddRating";
+import { getCurrentUser } from "@/actions/getCurrentUser";
+import { safeUser } from "@/Types";
 
 interface Iprams {
     productId?: string
 }
 
-const Product = ({params} : {params: Iprams}) => {
-    console.log('params', params);
+const Product = async({params} : {params: Iprams}) => {
 
-const product = products.find((item) => item.id === params.productId);
+    const product = await getProductById(params)
+    const user = await getCurrentUser()
+
+    if(!product) return <NullData title="Oops product with the given id does not exist"/>
 
 
 return (
@@ -18,7 +24,7 @@ return (
         <Container>
             <ProductDetails product= {product}/>
             <div className="flex flex-col mt-20 gap-4">
-                <div>Add Rating</div>
+                <AddRating product={product} user={user}/>
                 <ListRating product={product}/>
             </div>
         </Container>
