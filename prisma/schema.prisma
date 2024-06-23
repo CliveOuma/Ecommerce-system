@@ -21,6 +21,7 @@ model User {
   updatedAt       DateTime        @updatedAt
   role            Role            @default(USER)
   reviews         Review[]
+  orders          Order[]
 }
 
 enum Role {
@@ -95,4 +96,37 @@ model Session {
 
 type Image {
   image String
+}
+
+model Order {
+   id              String          @id @default(auto()) @map("_id") @db.ObjectId
+   userId          String          @db.ObjectId
+   amount          Float
+   currency        String
+   status          String
+   deliveryStatus  String?
+   createdAt       DateTime         @default(now())
+   products        CartProductType[]
+   address          Address?
+
+    user              User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+}
+type CartProductType{
+    id String
+    name String
+    description String
+    brand String
+    category String
+    selectedImg Image
+    quantity Int
+    price Float
+}
+type Address{
+  city  String
+  country  String
+  line1    String
+  line2    String?
+  postal_code  String
+  state       String
 }

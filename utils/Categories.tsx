@@ -1,5 +1,5 @@
 import { AiFillPhone, AiOutlineLaptop } from "react-icons/ai";
-import { MdOutlineKeyboard, MdStorefront, MdTv, MdWatch } from "react-icons/md";
+import { MdStorefront, MdTv, MdWatch } from "react-icons/md";
 
 export const categories = [
     {

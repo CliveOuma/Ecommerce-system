@@ -1,5 +1,4 @@
-
-"use client"
+"use client";
 
 import { useCallback, useState, useEffect } from "react";
 import { MdCheckCircle } from "react-icons/md";
@@ -9,7 +8,6 @@ import SetQuantity from "@/app/components/products/SetQuantity";
 import ProductImage from "@/app/components/ProductImage";
 import { useCart } from "@/hooks/useCart";
 import { Rating } from "@mui/material";
-
 
 interface ProductDetailsProps {
     product: any;
@@ -33,7 +31,7 @@ interface selectedImgType {
 }
 
 const Horizontal = () => {
-    return <hr className="w-[30%] my-2"></hr>;
+    return <hr className="w-[40%] my-2"></hr>;
 };
 
 const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
@@ -85,6 +83,19 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
         handleAddProductsToCart(cartProduct);
     };
 
+    const handleWhatsAppOrder = () => {
+        const message = `Hello, I would like to order the following product:
+        \nName: ${cartProduct.name}
+        \nDescription: ${cartProduct.description}
+        \nBrand: ${cartProduct.brand}
+        \nCategory: ${cartProduct.category}
+        \nQuantity: ${cartProduct.quantity}
+        \nPrice: $${cartProduct.price}`;
+        
+        const encodedMessage = encodeURIComponent(message);
+        window.location.href = `https://wa.me/+254740719423?text=${encodedMessage}`;
+    };
+
     const productRating =
         product.reviews.length > 0
             ? product.reviews.reduce((acc: number, item: any) => acc + item.rating, 0) /
@@ -92,7 +103,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
             : 0;
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+        <div className="grid mt-28 grid-cols-1 md:grid-cols-2 gap-12">
             <ProductImage cartProduct={cartProduct} />
             <div className="gap-1 flex flex-col text-slate-500 text-sm">
                 <h1 className="text-3xl font-medium text-slate-700">{product.name}</h1>
@@ -104,12 +115,10 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
                 <div className="text-justify">{product.description}</div>
                 <Horizontal />
                 <div>
-                    <span className="font-semibold">CATEGORY:</span>
-                    {product.category}
+                    <span className="font-semibold">CATEGORY:</span> {product.category}
                 </div>
                 <div>
-                    <span className="font-semibold">BRAND:</span>
-                    {product.brand}
+                    <span className="font-semibold">BRAND:</span> {product.brand}
                 </div>
                 <div className={product.inStock ? "text-teal-400" : "text-rose-400"}>
                     {product.inStock ? "In stock" : "out of stock"}
@@ -139,8 +148,11 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
                             handleQtyDecrease={handleQtyDecrease}
                         />
                         <Horizontal />
-                        <div className="max-w-[300px] cursor-pointer ">
+                        <div className="max-w-[300px] cursor-pointer mb-2">
                             <Button label="Add To Cart" onClick={handleAddToCart} />
+                        </div>
+                        <div className="max-w-[300px] cursor-pointer">
+                            <Button label="Order via WhatsApp" onClick={handleWhatsAppOrder} />
                         </div>
                     </>
                 )}

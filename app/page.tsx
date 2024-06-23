@@ -5,6 +5,7 @@ import HomeBanner from "./components/HomeBanner";
 import ProductCard from "./components/products/ProductCard";
 import getProducts, { IProductsParams } from "@/actions/getProducts";
 import NullData from "./components/NullData";
+import OfflineDetector from "./components/OfflineDetector";
 
 interface HomeProps{
   searchParams: IProductsParams
@@ -14,7 +15,7 @@ export default async function Home({searchParams}: HomeProps) {
   const products = await getProducts(searchParams)
 
   if(products.length === 0 ) {
-    return <NullData title="Oops! No products found. Click *All* to clear filters"/>
+    return <NullData title="Oops! No products"/>
   }
   
   //shufffle products algorithm
@@ -32,6 +33,7 @@ export default async function Home({searchParams}: HomeProps) {
   return (
     <div className="p-8">
       <Container>
+        
         <HomeBanner />
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-8">
           {shufffleProducts.map((product: any, index: number) => ( 
@@ -41,4 +43,4 @@ export default async function Home({searchParams}: HomeProps) {
       </Container>
     </div>
   );
-}
+}                  

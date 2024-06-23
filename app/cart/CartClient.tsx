@@ -19,7 +19,7 @@ const CartClient = () => {
                 </div>
                 <div>
                     <Link href={"/"} className="
-                    text-slate-500 flex items-center gap-1 mt-2">
+                    text-red-500 flex items-center gap-1 mt-2">
                         <MdArrowBack/>
                     <span>Start Shopping</span>
                     </Link>

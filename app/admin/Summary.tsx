@@ -10,7 +10,7 @@ interface SummaryProps {
     products: Product[]
     users: User[]
 }
-type SummaryDataType{
+type SummaryDataType = {
     [key: string]:{
         label: string;
         digit:number;

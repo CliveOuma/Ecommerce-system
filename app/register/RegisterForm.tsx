@@ -1,4 +1,5 @@
-"use client"
+"use client";
+
 import { useState, useEffect } from "react";
 import Heading from "../components/Heading";
 import Input from "../components/inputs/Input";
@@ -12,72 +13,72 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { safeUser } from "@/Types";
 
-
-
-interface RegisterFormProps{
+interface RegisterFormProps {
     currentUser: safeUser | null;
 }
 
-
-const RegisterForm:React.FC<RegisterFormProps> = ({currentUser})=> {
-    const [isLoading, setIsLoading] = useState(false); 
+const RegisterForm: React.FC<RegisterFormProps> = ({ currentUser }) => {
+    const [isLoading, setIsLoading] = useState(false);
 
     const { register, handleSubmit, formState: { errors } } = useForm<FieldValues>({
         defaultValues: {
             name: "",
-            email: "", 
+            email: "",
             password: "",
         }
     });
 
-    const router = useRouter()
+    const router = useRouter();
 
     useEffect(() => {
-        if(currentUser){
-            router.push('/')
-            router.refresh()
+        if (currentUser) {
+            router.push('/');
+            router.refresh();
         }
-
-    },[])
+    }, [currentUser, router]);
 
     const onSubmit: SubmitHandler<FieldValues> = (data) => {
-        setIsLoading(true); 
-        
+        setIsLoading(true);
+
         axios.post('/api/register', data).then(() => {
-            toast.success('Account successfully created')
+            toast.success('Account successfully created');
 
             signIn('credentials', {
                 email: data.email,
                 password: data.password,
                 redirect: false,
             }).then((callback) => {
-                if(callback?.ok){
-                    router.push('/')
-                    router.refresh()
-                        toast.success('Logged In Successfully')
-                    
+                if (callback?.ok) {
+                    router.push('/');
+                    router.refresh();
+                    toast.success('Logged In Successfully');
                 }
-                if(callback?.error){
-                    toast.error(callback.error)
+                if (callback?.error) {
+                    toast.error(callback.error);
                 }
-            })
-        }).catch(() => toast.error('something went wrong'))
-        .finally(() => {
+            });
+        }).catch((error) => {
+            if (error.response?.data?.error === 'User already exists') {
+                toast.error('User already exists');
+            } else {
+                toast.error('Something went wrong');
+            }
+        }).finally(() => {
             setIsLoading(false);
-        })
+        });
     };
-   //if user is currently logged in redirect
-    if(currentUser){
-        return <p className="text-center">Logged in Redirecting...</p>
+
+    // If user is currently logged in, redirect
+    if (currentUser) {
+        return <p className="text-center">Logged in Redirecting...</p>;
     }
 
     return (
         <>
-            <Heading title="Sign Up"/>
-            <Button outline label="Sign up with Google" icon={AiOutlineGoogle}
-            onClick={() => {}}/>
-            <hr className="bg-slate-300 w-full h-px"/>
-            <Input 
+            <Heading title="Sign Up" />
+            <Button outline label="Sign up with Google" icon={AiOutlineGoogle} onClick={() => { }} />
+            <hr className="bg-slate-300 w-full h-px" />
+            <Input
                 id="name"
                 label="Name"
                 disabled={isLoading}
@@ -85,7 +86,7 @@ const RegisterForm:React.FC<RegisterFormProps> = ({currentUser})=> {
                 errors={errors}
                 required
             />
-            <Input 
+            <Input
                 id="email"
                 label="Email"
                 disabled={isLoading}
@@ -93,7 +94,7 @@ const RegisterForm:React.FC<RegisterFormProps> = ({currentUser})=> {
                 errors={errors}
                 required
             />
-            <Input 
+            <Input
                 id="password"
                 label="Password"
                 disabled={isLoading}
@@ -102,10 +103,10 @@ const RegisterForm:React.FC<RegisterFormProps> = ({currentUser})=> {
                 required
                 type="password"
             />
-            <Button label="Sign Up" onClick={handleSubmit(onSubmit)}/>
+            <Button label="Sign up " onClick={handleSubmit(onSubmit)} disabled={isLoading} />
             <p className="text-sm">
-                Already have an account ?
-                <Link className="underline" href="/login"> Log in</Link>
+                Already have an account?
+                <Link className="underline text-blue-600" href="/login"> Log in</Link>
             </p>
         </>
     );
